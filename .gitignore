@@ -1,0 +1,18 @@
+
+# Bytecode and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env
+
+# Test reports and artifacts
+reports/
+temp/
+*.log
+
+# Playwright browser cache
+playwright/.cache/

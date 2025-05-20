@@ -1,0 +1,9 @@
+
+services:
+  playwright-tests:
+    build: .
+    volumes:
+      - ./temp:/test-runner/temp
+      - ./reports:/test-runner/reports
+    env_file:
+      - .env
