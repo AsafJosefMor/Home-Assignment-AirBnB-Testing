@@ -1,9 +1,10 @@
 ---
 
-# Automation Framework (Pytest + Playwright) for a home assignment
+# Automation Framework (Pytest + Playwright) - Home assignment
 
 ## Overview
-A browser automation framework using `pytest-playwright` only. Built with modularity, configurability, and test clarity in mind for a home assignment.
+A browser automation framework using `pytest-playwright` only.
+Built with modularity, configurability, and test clarity in mind for a home assignment.
 
 ---
 
@@ -13,24 +14,23 @@ A browser automation framework using `pytest-playwright` only. Built with modula
 - Config via `.env` + `config.py`
 - Plugin: `--suite-timeout` using environment variable
 - Screenshots and HTML test reports
-- Docker + Makefile support
+- Docker support
 
 ---
 
 ## Project Structure
 
 ```
-.
- config/                # Configuration, test data, and selectors
+ config/                # Configuration, test data
  pages/                 # Page Object Models
  tests/                 # Test cases (pytest)
  utils/                 # Plugins and logging utilities
- tests/reports/         # HTML reports, screenshots, JSON results
+ tests/reports/         # HTML reports, screenshots (created on runtime)
+ temp/                  # JSON output (created on runtime)
  run.sh                 # One-liner to setup and run locally
  Dockerfile             # Test runner container
  docker-compose.yml     # Docker execution
  requirements.txt
- Makefile
  pytest.ini
  README.md
 ```
@@ -59,11 +59,11 @@ bash run.sh
 
 ## Environment Variables
 
-| Variable               | Default      | Description                              |
-|------------------------|--------------|------------------------------------------|
-| `BASE_URL`             | airbnb.com   | URL for the test subject                 |
-| `WAIT_AFTER_ACTION_MS` | 5000         | Delay (in ms) between UI interactions    |
-| `SUITE_TIMEOUT_SEC`    | 900 (15 min) | Timeout for full test suite (in seconds) |
+| Variable               | Default      | Description                                |
+|------------------------|--------------|--------------------------------------------|
+| `BASE_URL`             | airbnb.com   | URL for the test subject                   |
+| `WAIT_AFTER_ACTION_MS` | 4000         | Delay (in ms) between some UI interactions |
+| `SUITE_TIMEOUT_SEC`    | 900 (15 min) | Timeout for full test suite (in seconds)   |
 
 ---
 
@@ -94,20 +94,6 @@ Builds the test runner and executes the suite with environment-configurable head
 
 ---
 
-If you encounter this error:
-
-> The virtual environment was not created successfully because ensurepip is not available...
-
-Run this once to fix it:
-
-```bash
-sudo apt install python3-venv
-```
-
-Then rerun setup using `run.sh` or manually.
-
----
-
 ## Test Data (config/test_data.json)
 
 All tests are driven by values defined in `config/test_data.json`, which includes:
@@ -123,18 +109,35 @@ All tests are driven by values defined in `config/test_data.json`, which include
 }
 ```
 
-To add more test cases:
+## To add more test cases:
 - Create additional JSON blocks
 - Use `@pytest.mark.parametrize` to load and run multiple inputs
 
 ---
 
-## Out of Scope
+## If you encounter this error:
+
+> The virtual environment was not created successfully because ensurepip is not available...
+
+Run this once to fix it:
+
+```bash
+sudo apt install python3-venv
+```
+
+Then rerun setup using `run.sh` or manually.
+
+---
+
+## Out of Scope and limitations
 
 This project was developed under short assignment constraints, and deliberately excludes the following:
 
+- Timings: the goal is to test the scenario without infrastructure failures
+- Limited best practices
 - In-depth logging
-- Code style and linting
+- Code style
+- Linting
 - Date Picker Pagination: The test uses only dates from the first visible month in the Airbnb calendar (next month). No pagination logic was implemented to navigate calendar months.
 - Listings Pagination Limit: All listings across all pages are evaluated. No environment variable was implemented to limit pages scanned.
 - Code Review and Commit Hygiene: This is a one-person home assignment and was not built with Git collaboration or commit structuring.

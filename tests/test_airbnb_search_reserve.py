@@ -45,6 +45,7 @@ def test_airbnb_search_reserve(page, test_data):
 
     # Perform search
     search_page = AirbnbSearchPage(page)
+    page.wait_for_load_state("networkidle")
     search_page.search(location, checkin, checkout, adults, children)
 
     # Validate search results against parameters
@@ -67,7 +68,7 @@ def test_airbnb_search_reserve(page, test_data):
 
     # Reservation
     reserve = AirbnbReservationPage(page)
-    result = reserve.reserve(test_data["phone"])
+    result = reserve.reserve(test_data["phone"], test_data)
 
     # Save reservation details to a file
     result_path = os.path.join(temp_dir, "post_reservation_details.json")

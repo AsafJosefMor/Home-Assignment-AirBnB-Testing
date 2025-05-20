@@ -1,29 +1,38 @@
+"""
+Page object for performing actions on Airbnb search results.
+"""
 import re
-from config.selectors import (
-    LISTING_CARDS_SELECTOR,
-    LISTING_RATING_SELECTOR,
-    LISTING_PRICE_SELECTOR,
-    NEXT_PAGE_BUTTON_SELECTOR
-)
 from config.config import WAIT_AFTER_ACTION_MS
 from pages.base_page import BasePage
 
-"""
-Page object for performing on Airbnb search results.
-"""
+
 class AirbnbResultPage(BasePage):
+    """Page object for analyzing and interacting with Airbnb search results."""
+
+    # Search result page selectors
+    _LISTING_CARDS_SELECTOR = '//div[@data-testid="card-container"]'
+    _LISTING_RATING_SELECTOR = './/span[@aria-hidden="true" and contains(text(), " (")]'
+    _LISTING_PRICE_SELECTOR = './/span[contains(text(), " per night")]'
+    _NEXT_PAGE_BUTTON_SELECTOR = '#site-content > div > div > div > div > div > nav > div > a:last-child'
+
     def find_best_rated_cheapest_listing(self):
         """
         Analyze all paginated Airbnb listings to extract rating and price,
         select the best (highest rating, lowest price), and navigate to it.
+
+        Returns:
+            dict: Details of the selected best listing
+
+        Raises:
+            AssertionError: If no listings are found
         """
         all_listings = []
         current_page = 1
 
         # Step through each paginated result page
         while True:
-            self.page.wait_for_timeout(WAIT_AFTER_ACTION_MS) # A lot of data needs to load in each page
-            listings = self.page.locator(f"xpath={LISTING_CARDS_SELECTOR}")
+            self.page.wait_for_timeout(WAIT_AFTER_ACTION_MS)
+            listings = self.page.locator(f"xpath={self._LISTING_CARDS_SELECTOR}")
             count = listings.count()
             self.log.info(f"Found {count} listings on page {current_page}")
 
@@ -33,8 +42,10 @@ class AirbnbResultPage(BasePage):
 
                 try:
                     # Extract rating and price
-                    rating_text = item.locator(f"xpath={LISTING_RATING_SELECTOR}").inner_text(timeout=WAIT_AFTER_ACTION_MS)
-                    price_text = item.locator(f"xpath={LISTING_PRICE_SELECTOR}").inner_text(timeout=WAIT_AFTER_ACTION_MS)
+                    rating_text = item.locator(f"xpath={self._LISTING_RATING_SELECTOR}").inner_text(
+                        timeout=WAIT_AFTER_ACTION_MS)
+                    price_text = item.locator(f"xpath={self._LISTING_PRICE_SELECTOR}").inner_text(
+                        timeout=WAIT_AFTER_ACTION_MS)
                     rating = float(rating_text.strip().split()[0])
                     price = int(re.sub(r"\D", "", price_text))
                 except Exception as e:
@@ -60,7 +71,7 @@ class AirbnbResultPage(BasePage):
                 })
 
             # Check for and click the pagination next button
-            next_button = self.page.locator(f"css={NEXT_PAGE_BUTTON_SELECTOR}")
+            next_button = self.page.locator(f"css={self._NEXT_PAGE_BUTTON_SELECTOR}")
             if next_button.count() > 0 and next_button.first.is_enabled():
                 next_button.first.click()
                 current_page += 1

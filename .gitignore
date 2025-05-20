@@ -7,12 +7,14 @@ __pycache__/
 
 # Virtual environments
 venv/
-.env
 
 # Test reports and artifacts
-reports/
+tests/reports
 temp/
 *.log
 
 # Playwright browser cache
 playwright/.cache/
+
+# IDE
+.idea/
